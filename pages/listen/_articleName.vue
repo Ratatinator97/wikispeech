@@ -1,15 +1,23 @@
 <template>
 	<div class="container">
-		{{ $route.params.articleName }}
-
-		<div class="box">
+		<p class="title">{{ $route.params.articleName }}</p>
+		<br />
+		<b-button
+			type="is-primary"
+			icon-right="volume-high"
+			@click="toListen(selected)"
+		>
+			Play the entire article
+		</b-button>
+		<section style="margin: 2vw">
 			<card
+				class="column"
 				v-for="section in sections"
 				:key="section.title"
 				:title="section.title"
 				:content="section.content"
 			/>
-		</div>
+		</section>
 	</div>
 </template>
 <script>
@@ -21,12 +29,15 @@ export default {
 			sections: [],
 		}
 	},
-	async asyncData(context) {
+	async fetch() {
 		let article = await wiki({
 			apiUrl: 'https://fr.wikipedia.org/w/api.php',
-		}).page(context.route.params.articleName)
-		context.sections = await article.content()
-		console.log(context.sections)
+		}).page(this.$route.params.articleName)
+		let sections = await article.content()
+		console.log(sections)
+		sections.forEach((section) => {
+			this.sections.push(section)
+		})
 	},
 	components: {
 		card,
