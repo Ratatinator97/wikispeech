@@ -5,7 +5,7 @@
 		<b-button
 			type="is-primary"
 			icon-right="volume-high"
-			@click="toListen(selected)"
+			@click="listenAll()"
 		>
 			Play the entire article
 		</b-button>
@@ -16,6 +16,7 @@
 				:key="section.title"
 				:title="section.title"
 				:content="section.content"
+				:languages="languages"
 			/>
 		</section>
 	</div>
@@ -24,9 +25,27 @@
 import wiki from 'wikijs'
 import card from '@/components/Card'
 export default {
+	created() {
+		const allVoicesObtained = new Promise(function (resolve, reject) {
+			let voices = window.speechSynthesis.getVoices()
+			if (voices.length !== 0) {
+				resolve(voices)
+			} else {
+				window.speechSynthesis.addEventListener(
+					'voiceschanged',
+					function () {
+						voices = window.speechSynthesis.getVoices()
+						resolve(voices)
+					}
+				)
+			}
+		})
+		allVoicesObtained.then((voices) => (this.languages = voices))
+	},
 	data() {
 		return {
 			sections: [],
+			languages: [],
 		}
 	},
 	async fetch() {
@@ -34,10 +53,23 @@ export default {
 			apiUrl: 'https://fr.wikipedia.org/w/api.php',
 		}).page(this.$route.params.articleName)
 		let sections = await article.content()
-		console.log(sections)
 		sections.forEach((section) => {
 			this.sections.push(section)
 		})
+	},
+	methods: {
+		wait(timeout) {
+			return new Promise((resolve) => {
+				setTimeout(resolve, timeout)
+			})
+		},
+		async listenAll() {
+			for (const section of this.sections) {
+				this.$bus.$emit(section.title)
+				console.log('Evt emmited')
+				await this.wait(1000)
+			}
+		},
 	},
 	components: {
 		card,
