@@ -80,6 +80,7 @@ export default {
 					await this.wait(1000)
 				}
 			}
+			this.$bus.$emit('completed')
 		},
 	},
 	components: {

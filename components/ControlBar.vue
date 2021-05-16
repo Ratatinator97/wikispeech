@@ -37,10 +37,15 @@ export default {
 			this.$bus.$emit('finish')
 		},
 		async cancel() {
-			for (let i = 0; i < 100; i++) {
+			let completed = false
+			this.$bus.$on('completed', () => {
+				completed = true
+			})
+			while (!completed) {
+				console.log('cancel')
 				window.speechSynthesis.cancel()
 				this.$bus.$emit('finish')
-				await this.wait(10)
+				await this.wait(200)
 			}
 		},
 	},
