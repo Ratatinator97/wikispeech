@@ -1,10 +1,10 @@
 <template>
-	<div class="container">
+	<div class="container is-fluid">
 		<section>
-			<b-field label="Search for any Wikipedia article">
+			<b-field :label="$t('SearchForAny')">
 				<b-autocomplete
 					:data="data"
-					placeholder="e.g. Alexander the Great"
+					:placeholder="$t('SearchForAnyExample')"
 					field="title"
 					:loading="isFetching"
 					@typing="getAsyncData"
@@ -17,9 +17,15 @@
 				type="is-primary"
 				icon-right="volume-high"
 				@click="toListen(selected)"
+				:alt="$t('ListenTheArticle')"
 			>
-				Listen
+				{{ $t('ListenTheArticle') }}
 			</b-button>
+			<b-image
+				lazy
+				alt="Example of usage of wikispeech"
+				:srcset="require('@/assets/index.png').srcSet"
+			></b-image>
 		</section>
 	</div>
 </template>
@@ -40,6 +46,9 @@ export default {
 		toListen(selected) {
 			this.$nuxt.$options.router.push('listen/' + selected)
 		},
+		getLocale() {
+			return this.$cookies.get('i18n_redirected')
+		},
 		getAsyncData: debounce(function (name) {
 			if (!name.length) {
 				this.data = []
@@ -47,12 +56,12 @@ export default {
 			}
 			this.isFetching = true
 			wiki({
-				apiUrl: 'https://fr.wikipedia.org/w/api.php',
+				apiUrl:
+					'https://' + this.getLocale() + '.wikipedia.org/w/api.php',
 			})
 				.search(name)
 				.then((query) => {
 					this.data = []
-					console.log(query)
 					query.results.forEach((article) => this.data.push(article))
 				})
 				.catch((error) => {

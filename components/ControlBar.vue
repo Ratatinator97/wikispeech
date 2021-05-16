@@ -1,25 +1,47 @@
 <template>
 	<div class="notification columns is-mobile">
 		<div class="column is-narrow">
-			<b-button type="is-primary" icon-right="play" @click="play()" />
+			<b-button
+				type="is-primary"
+				icon-right="play"
+				@click="play()"
+				alt="$t('PlayTheEntire')"
+			/>
 		</div>
 		<div class="column is-narrow">
-			<b-button type="is-light" icon-right="pause" @click="pause()" />
+			<b-button
+				type="is-light"
+				icon-right="pause"
+				@click="pause()"
+				:alt="$t('PlayTheEntire')"
+			/>
 		</div>
 		<div class="column is-narrow">
 			<b-button
 				type="is-warining"
 				icon-right="skip-next"
 				@click="next()"
+				alt="$t('PlayTheEntire')"
 			/>
 		</div>
 		<div class="column is-narrow">
-			<b-button type="is-danger" icon-right="cancel" @click="cancel()" />
+			<b-button
+				type="is-danger"
+				icon-right="cancel"
+				@click="cancel()"
+				alt="$t('PlayTheEntire')"
+			/>
 		</div>
 	</div>
 </template>
 <script>
 export default {
+	props: {
+		isSingleSection: {
+			type: Boolean,
+			required: true,
+		},
+	},
 	methods: {
 		wait(timeout) {
 			return new Promise((resolve) => {
@@ -37,15 +59,19 @@ export default {
 			this.$bus.$emit('finish')
 		},
 		async cancel() {
-			let completed = false
-			this.$bus.$on('completed', () => {
-				completed = true
-			})
-			while (!completed) {
-				console.log('cancel')
+			if (this.isSingleSection) {
 				window.speechSynthesis.cancel()
 				this.$bus.$emit('finish')
-				await this.wait(200)
+			} else {
+				let completed = false
+				this.$bus.$on('completed', () => {
+					completed = true
+				})
+				while (!completed) {
+					window.speechSynthesis.cancel()
+					this.$bus.$emit('finish')
+					await this.wait(200)
+				}
 			}
 		},
 	},

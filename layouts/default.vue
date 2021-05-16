@@ -17,5 +17,18 @@
 			</div>
 		</nav>
 		<nuxt />
+		<CookieControl :locale="getLocale()" />
 	</div>
 </template>
+<script>
+export default {
+	head() {
+		return this.$nuxtI18nHead({ addSeoAttributes: true })
+	},
+	methods: {
+		getLocale() {
+			return this.$cookies.get('i18n_redirected')
+		},
+	},
+}
+</script>

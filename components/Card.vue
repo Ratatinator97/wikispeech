@@ -10,7 +10,7 @@
 					icon-right="volume-high"
 					@click="listen()"
 				>
-					Play section
+					{{ $t('PlayTheSection') }}
 				</b-button>
 			</header>
 			<div class="card-content">
@@ -59,6 +59,9 @@ export default {
 				setTimeout(resolve, timeout)
 			})
 		},
+		getLocale() {
+			return this.$cookies.get('i18n_redirected')
+		},
 		async listen() {
 			await this.read(this.title, 0.7, 0.8)
 			await this.read(this.content)
@@ -76,7 +79,7 @@ export default {
 					}
 					var msg = new SpeechSynthesisUtterance(message)
 					let voice = this.languages.filter(
-						(voice) => voice.lang == 'fr-FR' //TODO dynamic
+						(voice) => voice.lang.includes(this.getLocale()) //TODO dynamic
 					)
 					if (voice.length !== 0) {
 						msg.voice = voice[0]

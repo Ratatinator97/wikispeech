@@ -1,14 +1,15 @@
 <template>
 	<div>
-		<div class="container">
+		<div class="container is-fluid">
 			<p class="title">{{ $route.params.articleName }}</p>
 			<br />
 			<b-button
 				type="is-primary"
 				icon-right="volume-high"
 				@click="listenAll()"
+				:alt="$t('PlayTheEntire')"
 			>
-				Play the entire article
+				{{ $t('PlayTheEntire') }}
 			</b-button>
 			<section style="margin: 2vw">
 				<card
@@ -22,7 +23,7 @@
 			</section>
 		</div>
 		<div class="contenant">
-			<controlBar class="controlBar" />
+			<controlBar class="controlBar" :isSingleSection="isSingleSection" />
 		</div>
 	</div>
 </template>
@@ -52,11 +53,12 @@ export default {
 		return {
 			sections: [],
 			languages: [],
+			isSingleSection: true,
 		}
 	},
 	async fetch() {
 		let article = await wiki({
-			apiUrl: 'https://fr.wikipedia.org/w/api.php',
+			apiUrl: 'https://' + this.getLocale() + '.wikipedia.org/w/api.php',
 		}).page(this.$route.params.articleName)
 		let sections = await article.content()
 		sections.forEach((section) => {
@@ -69,7 +71,11 @@ export default {
 				setTimeout(resolve, timeout)
 			})
 		},
+		getLocale() {
+			return this.$cookies.get('i18n_redirected')
+		},
 		async listenAll() {
+			this.isSingleSection = false
 			for (const section of this.sections) {
 				this.$bus.$emit(section.title)
 				let waitForFinish = true
@@ -81,6 +87,7 @@ export default {
 				}
 			}
 			this.$bus.$emit('completed')
+			this.isSingleSection = true
 		},
 	},
 	components: {
