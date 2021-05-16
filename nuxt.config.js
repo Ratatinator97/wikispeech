@@ -35,6 +35,14 @@ export default {
     color: "#66a8ff"
   },
 
+  responsiveLoader: {
+    name: 'img/[hash:7]-[width].[ext]',
+    min: 240, // minimum image width generated
+    max: 1080, // maximum image width generated
+    steps: 2, // five sizes per image will be generated
+    placeholder: false, // no placeholder will be generated
+    quality: 1, // images are compressed with medium quality
+  },
   // Modules: https://go.nuxtjs.dev/config-modules
   modules: [
     // https://go.nuxtjs.dev/buefy
