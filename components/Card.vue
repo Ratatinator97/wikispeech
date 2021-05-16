@@ -62,6 +62,8 @@ export default {
 		async listen() {
 			await this.read(this.title, 0.7, 0.8)
 			await this.read(this.content)
+			console.log('Emitting finish from component')
+			this.$bus.$emit('finish')
 		},
 		async read(message, pitch = 1, rate = 1) {
 			return new Promise((resolve, error) => {

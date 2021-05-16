@@ -1,29 +1,35 @@
 <template>
-	<div class="container">
-		<p class="title">{{ $route.params.articleName }}</p>
-		<br />
-		<b-button
-			type="is-primary"
-			icon-right="volume-high"
-			@click="listenAll()"
-		>
-			Play the entire article
-		</b-button>
-		<section style="margin: 2vw">
-			<card
-				class="column"
-				v-for="section in sections"
-				:key="section.title"
-				:title="section.title"
-				:content="section.content"
-				:languages="languages"
-			/>
-		</section>
+	<div>
+		<div class="container">
+			<p class="title">{{ $route.params.articleName }}</p>
+			<br />
+			<b-button
+				type="is-primary"
+				icon-right="volume-high"
+				@click="listenAll()"
+			>
+				Play the entire article
+			</b-button>
+			<section style="margin: 2vw">
+				<card
+					class="column"
+					v-for="section in sections"
+					:key="section.title"
+					:title="section.title"
+					:content="section.content"
+					:languages="languages"
+				/>
+			</section>
+		</div>
+		<div class="contenant">
+			<controlBar class="controlBar" />
+		</div>
 	</div>
 </template>
 <script>
 import wiki from 'wikijs'
 import card from '@/components/Card'
+import controlBar from '@/components/ControlBar'
 export default {
 	created() {
 		const allVoicesObtained = new Promise(function (resolve, reject) {
@@ -66,13 +72,29 @@ export default {
 		async listenAll() {
 			for (const section of this.sections) {
 				this.$bus.$emit(section.title)
-				console.log('Evt emmited')
-				await this.wait(1000)
+				let waitForFinish = true
+				this.$bus.$on('finish', () => {
+					waitForFinish = false
+				})
+				while (waitForFinish) {
+					await this.wait(1000)
+				}
 			}
 		},
 	},
 	components: {
 		card,
+		controlBar,
 	},
 }
 </script>
+<style scoped>
+.controlBar {
+	bottom: 1vw;
+	position: fixed;
+}
+.contenant {
+	display: flex;
+	justify-content: center;
+}
+</style>
