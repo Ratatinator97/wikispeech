@@ -31,7 +31,7 @@
     "core-js": "^3.9.1",
     "lodash": "^4.17.21",
     "nuxt": "^2.15.3",
-    "nuxt-buefy": "^0.4.4",
+    "nuxt-buefy": "^0.4.9",
     "nuxt-cookie-control": "^1.9.7",
     "nuxt-i18n": "^6.27.0",
     "nuxt-responsive-loader": "^2.0.1",
