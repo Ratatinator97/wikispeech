@@ -28,7 +28,7 @@
     "eslint-plugin-vue": "^7.7.0",
     "lodash": "^4.17.21",
     "node-sass": "^5.0.0",
-    "nuxt": "^2.15.3",
+    "nuxt": "^2.15.8",
     "nuxt-buefy": "^0.4.4",
     "nuxt-cookie-control": "^1.9.7",
     "nuxt-i18n": "^6.27.0",
