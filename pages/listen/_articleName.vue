@@ -18,6 +18,7 @@
 					:key="section.title"
 					:title="section.title"
 					:content="section.content"
+					:items="section.items"
 					:languages="languages"
 				/>
 			</section>

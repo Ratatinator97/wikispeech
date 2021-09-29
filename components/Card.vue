@@ -13,12 +13,22 @@
 					{{ $t('PlayTheSection') }}
 				</b-button>
 			</header>
-			<div class="card-content">
+			<div v-if="!items" class="card-content">
 				<div class="content has-text-centered">
 					<p class="has-text-grey">
 						{{ content }}
 					</p>
 				</div>
+			</div>
+			<div v-else class="card-content">
+				<card
+					v-for="item in items"
+					:key="item.title"
+					:title="item.title"
+					:content="item.content"
+					:languages="languages"
+					:items="item.items"
+				/>
 			</div>
 			<footer class="card-footer">
 				<div class="card-footer-item">
@@ -30,6 +40,7 @@
 </template>
 
 <script>
+import card from '@/components/Card'
 export default {
 	props: {
 		title: {
@@ -43,6 +54,10 @@ export default {
 		languages: {
 			type: Array,
 			required: true,
+		},
+		items: {
+			type: Array,
+			required: false,
 		},
 	},
 	created() {
@@ -63,10 +78,24 @@ export default {
 			return this.$cookies.get('i18n_redirected')
 		},
 		async listen() {
-			await this.read(this.title, 0.7, 0.8)
-			await this.read(this.content)
-			console.log('Emitting finish from component')
-			this.$bus.$emit('finish')
+			if (!this.items) {
+				await this.read(this.title, 0.7, 0.8)
+				await this.read(this.content)
+				this.$bus.$emit('finish')
+			} else {
+				await this.read(this.title, 0.7, 0.8)
+				for (const item of this.items) {
+					this.$bus.$emit(item.title)
+					let waitForFinish = true
+					this.$bus.$on('finish', () => {
+						waitForFinish = false
+					})
+					while (waitForFinish) {
+						await this.wait(1000)
+					}
+				}
+				this.$bus.$emit('finish')
+			}
 		},
 		async read(message, pitch = 1, rate = 1) {
 			return new Promise((resolve, error) => {
