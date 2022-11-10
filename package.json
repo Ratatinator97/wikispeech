@@ -34,7 +34,7 @@
     "nuxt-i18n": "^6.27.0",
     "nuxt-responsive-loader": "^2.0.1",
     "prettier": "^2.2.1",
-    "sass-loader": "^10.1.1",
+    "sass-loader": "^13.2.0",
     "wikijs": "^6.3.2"
   }
 }
